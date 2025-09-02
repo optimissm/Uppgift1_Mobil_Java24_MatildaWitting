@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "725111703546",
+    "project_id": "mobiljava24",
+    "storage_bucket": "mobiljava24.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725111703546:android:8c84216201cbca6fdfc643",
+        "android_client_info": {
+          "package_name": "com.example.shakeapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp-_ZjVZBV7d-kE8TKm0TSC1HMEYB88Eg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
