@@ -23,11 +23,11 @@ public class MainActivity extends AppCompatActivity{
     // fall jag vill ha samma TAG på mer än en sak
     // private static final String TAG = "Matilda";
 
-    private SensorManager sensorManager;
-    private Sensor accelerometer, gyroscope, proximity;
-    private SensorEventListener listener;
+    SensorManager sensorManager;
+    Sensor accelerometer, gyroscope, proximity;
+    SensorEventListener listener;
 
-    private TextView accelTextView, gyroTextView, proxTextView;
+    TextView accelTextView, gyroTextView, proxTextView;
 
 
     @Override
@@ -55,8 +55,10 @@ public class MainActivity extends AppCompatActivity{
         proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
         listener = new SensorEventListener() {
+            // denna kompilerar koden
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                // gör det möjligt att debugga
                 Log.i("SENSOR", "Accuracy Changed: "
                         + sensor.getName() + " -> " + accuracy);
 
@@ -65,20 +67,31 @@ public class MainActivity extends AppCompatActivity{
 
             }
 
+            // denna körs varje gång en sensor ändrar värde
+            // så för att kunna få ut olika värden på telefonen
+            // så behövs denna metoden
             @Override
             public void onSensorChanged(SensorEvent event) {
                 // Log.i("MATILDA", "onSensorChanged: " + event.values[0] + " y: " + event.values[1]);
                 // Log.i("MATILDA", "onSensorChanged: " + event.values[0] + " accel z: " + event.values[2]);
 
+                // här sätter jag in en metod som berättar
+                // vilken sensor som har ändrat värde
                 switch (event.sensor.getType()) {
                     case Sensor.TYPE_ACCELEROMETER:
+                        // skriver ut värdena i loggen, så att jag kan se resultat i loggen
+                        // vilket är bra till debugg
                         Log.i("ACCELEROMETER", "X: " + event.values[0] +
+                                // behåller alla decimaler i loggen
                                 " Y: " + event.values[1] +
                                 " Z: " + event.values[2]);
-                        tv.setText("Accelerometer" +
-                                "\nX: " + event.values[0] +
-                                "\nY: " + event.values[1] +
-                                "\nZ: " + event.values[2]);
+                        // detta ger mig värdena direkt, live, på skärmen
+                        accelTextView.setText(String.format(
+                                "Accelerometer" +
+                                // begränsar det också till 2 decimaler på skärmen (lite snyggare)
+                                "\nX: %.2" + event.values[0] +
+                                "\nY: %.2" + event.values[1] +
+                                "\nZ: %.2" + event.values[2]));
 
                         break;
 
@@ -86,15 +99,17 @@ public class MainActivity extends AppCompatActivity{
                         Log.i("GYROSCOPE", "X: " + event.values[0] +
                                 " Y: " + event.values[1] +
                                 " Z: " + event.values[2]);
-                        tv.setText("Gyroskop\nX: " + event.values[0] +
-                                "\nY: " + event.values[1] +
-                                "\nZ: " + event.values[2]);
+                        gyroTextView.setText(String.format(
+                                "Gyroscope" +
+                                "\nX: %.2" + event.values[0] +
+                                "\nY: %.2" + event.values[1] +
+                                "\nZ: %.2" + event.values[2]));
 
                         break;
 
                     case Sensor.TYPE_PROXIMITY:
                         Log.i("PROXIMITY", "Proximity: " + event.values[0]);
-                        tv.setText("Proximity: " + event.values[0]);
+                        proxTextView.setText("Proximity: " + event.values[0]);
 
                         break;
 
@@ -114,14 +129,17 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    // lägger till en onPause, så att appen inte körs hela tiden
     @Override
     protected void onPause() {
         super.onPause();
+        // därför slutar jag lyssna
         sensorManager.unregisterListener(listener);
     }
 
+    // och en funktion för att starta igen
     @Override
-            protected void onResume() {
+        protected void onResume() {
         super.onResume();
 
         if (accelerometer != null)
