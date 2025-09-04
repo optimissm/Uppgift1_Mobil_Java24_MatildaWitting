@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity{
                         double acceleration = Math.sqrt(x * x + y * y + z * z);
 
                         // vart ska gränsen för "earthquake" gå?
-                        if (acceleration > 50 && !shakeDetected) {
+                        if (acceleration > 65 && !shakeDetected) {
                             shakeDetected = true;
 
                             runOnUiThread(() -> {
