@@ -9,6 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity{
     // lägger till TextView så att värdena på skärmen visas live
     TextView accelTextView, gyroTextView, proxTextView;
     // ska ha in en knapp för att sätta igång sensorerna
+    ImageView imageFlip;
     Button startBtn;
     Switch lightSwitch;
 
@@ -62,9 +64,10 @@ public class MainActivity extends AppCompatActivity{
         gyroTextView = findViewById(R.id.gyroTextView);
         proxTextView = findViewById(R.id.proxTextView);
 
-        // hämtar knapp och switch från xml
+        // hämtar knapp, switch och image från xml
         startBtn = findViewById(R.id.startBtn);
         lightSwitch = findViewById(R.id.lightSwitch);
+        imageFlip = findViewById(R.id.imageFlip);
 
         // starta/hämta alla sensorer från telefonen
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -79,7 +82,6 @@ public class MainActivity extends AppCompatActivity{
                 // gör det möjligt att debugga
                 Log.i("SENSOR", "Accuracy Changed: "
                         + sensor.getName() + " -> " + accuracy);
-
             }
 
             // denna körs varje gång en sensor ändrar värde
@@ -164,6 +166,10 @@ public class MainActivity extends AppCompatActivity{
                         "\nY: " + event.values[1] +
                         "\nZ: " + event.values[2]));
 
+        if (imageFlip != null) {
+            imageFlip.setRotation(x * 10);
+        }
+
     }
 
     // metod för min popup
@@ -184,7 +190,7 @@ public class MainActivity extends AppCompatActivity{
     private void darkLight() {
         lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                // Dark Mode
+                // darkmode
                 findViewById(R.id.main).setBackgroundColor(Color.parseColor("#007A60"));
                 accelTextView.setTextColor(Color.parseColor("#E36802"));
                 gyroTextView.setTextColor(Color.parseColor("#E36802"));
@@ -192,7 +198,7 @@ public class MainActivity extends AppCompatActivity{
                 startBtn.setTextColor(Color.parseColor("#E36802"));
                 lightSwitch.setTextColor(Color.parseColor("#58E0C6"));
             } else {
-                // Light Mode
+                // lightmode
                 findViewById(R.id.main).setBackgroundColor(Color.parseColor("#FFE0F0"));
                 accelTextView.setTextColor(Color.parseColor("#FF0F8E"));
                 gyroTextView.setTextColor(Color.parseColor("#FF0F8E"));
