@@ -18,29 +18,33 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity{
 
-    // glöm inte att skriva kommentarer till inlämning
-    // och rapport på 100 ord
-    // eller tre bilder
-
     // fall jag vill ha samma TAG på mer än en sak
     // private static final String TAG = "Matilda";
 
+    // hanterar och gör det möjligt för användning av sensorerna
     SensorManager sensorManager;
     Sensor accelerometer, gyroscope, proximity;
     SensorEventListener listener;
 
+    // lägger till TextView så att värdena på skärmen visas live
     TextView accelTextView, gyroTextView, proxTextView;
+    // ska ha in en knapp för att sätta igång sensorerna
     Button startBtn;
 
+    // är sensorerna på eller av?
     boolean sensorsActive = false;
     // så att bara en popup öppnas åt gången
     boolean shakeDetected = false;
 
 
+    // detta är när appen startas så "skapas" den
+    // och med EdgeToEdge tar appen upp hela skärmen
+    // men inte nav/statusbar
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        // laddar xml
         setContentView(R.layout.activity_main);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity{
             return insets;
         });
 
-        // TextView till alla sensorer
+        // hämtar textView till alla sensorer från xml
         accelTextView = findViewById(R.id.accelTextView);
         gyroTextView = findViewById(R.id.gyroTextView);
         proxTextView = findViewById(R.id.proxTextView);
@@ -58,7 +62,7 @@ public class MainActivity extends AppCompatActivity{
         // hämtar knapp från xml
         startBtn = findViewById(R.id.startBtn);
 
-        // starta alla sensorer
+        // starta/hämta alla sensorer från telefonen
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -79,9 +83,6 @@ public class MainActivity extends AppCompatActivity{
             // så behövs denna metoden
             @Override
             public void onSensorChanged(SensorEvent event) {
-                // Log.i("MATILDA", "onSensorChanged: " + event.values[0] + " y: " + event.values[1]);
-                // Log.i("MATILDA", "onSensorChanged: " + event.values[0] + " accel z: " + event.values[2]);
-
                 // här sätter jag in en metod som berättar
                 // vilken sensor som har ändrat värde
                 switch (event.sensor.getType()) {
@@ -108,13 +109,12 @@ public class MainActivity extends AppCompatActivity{
                         proxTextView.setText("Proximity: " + event.values[0]);
 
                         break;
-
                 }
 
             }
         };
 
-        // knapp-lyssnare som startar sensorerna
+        // knapp-lyssnare som startar/pausar sensorerna
         startBtn.setOnClickListener(v -> {
             if (sensorsActive) {
                 sensorManager.unregisterListener(listener);
@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity{
         float y = event.values[1];
         float z = event.values[2];
 
+        // vår totala acceleration
         Log.i("ACCELEROMETER", "X: " + x + " Y: " + y + " Z: " + z);
 
         // här räknas den totala accelerationen ut
