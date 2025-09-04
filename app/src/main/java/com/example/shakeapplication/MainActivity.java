@@ -1,6 +1,7 @@
 package com.example.shakeapplication;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -8,6 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity{
     TextView accelTextView, gyroTextView, proxTextView;
     // ska ha in en knapp för att sätta igång sensorerna
     Button startBtn;
+    Switch lightSwitch;
 
     // är sensorerna på eller av?
     boolean sensorsActive = false;
@@ -59,8 +62,9 @@ public class MainActivity extends AppCompatActivity{
         gyroTextView = findViewById(R.id.gyroTextView);
         proxTextView = findViewById(R.id.proxTextView);
 
-        // hämtar knapp från xml
+        // hämtar knapp och switch från xml
         startBtn = findViewById(R.id.startBtn);
+        lightSwitch = findViewById(R.id.lightSwitch);
 
         // starta/hämta alla sensorer från telefonen
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -129,6 +133,9 @@ public class MainActivity extends AppCompatActivity{
 
             }
         });
+
+        darkLight();
+
     }
 
     // metoden till accelerometern
@@ -172,6 +179,30 @@ public class MainActivity extends AppCompatActivity{
                             })
                     .show();
         });
+    }
+
+    private void darkLight() {
+        lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // Dark Mode
+                findViewById(R.id.main).setBackgroundColor(Color.parseColor("#007A60"));
+                accelTextView.setTextColor(Color.parseColor("#E36802"));
+                gyroTextView.setTextColor(Color.parseColor("#E36802"));
+                proxTextView.setTextColor(Color.parseColor("#E36802"));
+                startBtn.setTextColor(Color.parseColor("#E36802"));
+                lightSwitch.setTextColor(Color.parseColor("#58E0C6"));
+            } else {
+                // Light Mode
+                findViewById(R.id.main).setBackgroundColor(Color.parseColor("#FFE0F0"));
+                accelTextView.setTextColor(Color.parseColor("#FF0F8E"));
+                gyroTextView.setTextColor(Color.parseColor("#FF0F8E"));
+                proxTextView.setTextColor(Color.parseColor("#FF0F8E"));
+                startBtn.setTextColor(Color.parseColor("#FF0F8E"));
+                lightSwitch.setTextColor(Color.parseColor("#FF0F8E"));
+            }
+
+        });
+
     }
 
     private void registerSensors() {
