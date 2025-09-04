@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +15,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Accelerometer: "
-        android:textSixe="16sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,5 +45,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
     />
+
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activate Sensors"
+        app:layout_constraintTop_toBottomOf="@id/proxTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

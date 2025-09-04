@@ -1,11 +1,13 @@
 package com.example.shakeapplication;
 
+import android.app.AlertDialog;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -29,6 +31,10 @@ public class MainActivity extends AppCompatActivity{
 
     TextView accelTextView, gyroTextView, proxTextView;
 
+    Button startBtn;
+    boolean sensorsActive = false;
+    boolean shakeDetected = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,9 @@ public class MainActivity extends AppCompatActivity{
         accelTextView = findViewById(R.id.accelTextView);
         gyroTextView = findViewById(R.id.gyroTextView);
         proxTextView = findViewById(R.id.proxTextView);
+
+        // hämtar knapp från xml
+        startBtn = findViewById(R.id.startBtn);
 
         // starta alla sensorer
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -79,19 +88,50 @@ public class MainActivity extends AppCompatActivity{
                 // vilken sensor som har ändrat värde
                 switch (event.sensor.getType()) {
                     case Sensor.TYPE_ACCELEROMETER:
+                        // dessa är de värdena vi har att jobba med
+                        float x = event.values[0];
+                        float y = event.values[1];
+                        float z = event.values[2];
+
+                        Log.i("ACCELEROMETER", "X: " + x + " Y: " + y + " Z: " + z);
+
+                        // här räknas den totala accelerationen ut
+                        double acceleration = Math.sqrt(x * x + y * y + z * z);
+
+                        // vart ska gränsen för "earthquake" gå?
+                        if (acceleration > 50 && !shakeDetected) {
+                            shakeDetected = true;
+
+                            runOnUiThread(() -> {
+                                new AlertDialog.Builder(MainActivity.this)
+                                        .setTitle("Shake It Baby!")
+                                        .setMessage("You've got some sweet moves!")
+                                        .setPositiveButton("THANKS",
+                                                (dialog, which) -> {
+                                            dialog.dismiss();
+                                            shakeDetected = false;
+                                                })
+                                        .show();
+                            });
+                        }
+
+
                         // skriver ut värdena i loggen, så att jag kan se resultat i loggen
                         // vilket är bra till debugg
-                        Log.i("ACCELEROMETER", "X: " + event.values[0] +
-                                // behåller alla decimaler i loggen
-                                " Y: " + event.values[1] +
-                                " Z: " + event.values[2]);
-                        // detta ger mig värdena direkt, live, på skärmen
+//                        Log.i("ACCELEROMETER", "X: " + event.values[0] +
+//                                // behåller alla decimaler i loggen
+//                                " Y: " + event.values[1] +
+//                                " Z: " + event.values[2]);
+//                        // detta ger mig värdena direkt, live, på skärmen
                         accelTextView.setText(String.format(
                                 "Accelerometer" +
                                 // begränsar det också till 2 decimaler på skärmen (lite snyggare)
-                                "\nX: %.2" + event.values[0] +
-                                "\nY: %.2" + event.values[1] +
-                                "\nZ: %.2" + event.values[2]));
+                                "\nX: " + event.values[0] +
+                                "\nY: " + event.values[1] +
+                                "\nZ: " + event.values[2]));
+
+//                                "Accelerometer\nX: %.2f\nY: %.2f\nZ: %.2f",
+//                                event.values[0], event.values[1], event.values[2]));
 
                         break;
 
@@ -101,9 +141,9 @@ public class MainActivity extends AppCompatActivity{
                                 " Z: " + event.values[2]);
                         gyroTextView.setText(String.format(
                                 "Gyroscope" +
-                                "\nX: %.2" + event.values[0] +
-                                "\nY: %.2" + event.values[1] +
-                                "\nZ: %.2" + event.values[2]));
+                                "\nX: " + event.values[0] +
+                                "\nY: " + event.values[1] +
+                                "\nZ: " + event.values[2]));
 
                         break;
 
@@ -118,15 +158,27 @@ public class MainActivity extends AppCompatActivity{
             }
         };
 
-        if (accelerometer != null)
-            sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        // knapp-lyssnare
+        startBtn.setOnClickListener(v -> {
+            if (sensorsActive) {
+                sensorManager.unregisterListener(listener);
+                startBtn.setText("Activate Sensors");
+                sensorsActive = false;
 
-        if (gyroscope != null)
-            sensorManager.registerListener(listener, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+            } else {
+                // starta sensorerna
+                if (accelerometer != null)
+                    sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                if (gyroscope != null)
+                    sensorManager.registerListener(listener, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+                if (proximity != null)
+                    sensorManager.registerListener(listener, proximity, SensorManager.SENSOR_DELAY_NORMAL);
 
-        if (proximity != null)
-            sensorManager.registerListener(listener, proximity, SensorManager.SENSOR_DELAY_NORMAL);
+                startBtn.setText("Deactivate Sensors");
+                sensorsActive = true;
 
+            }
+        });
     }
 
     // lägger till en onPause, så att appen inte körs hela tiden
@@ -141,15 +193,6 @@ public class MainActivity extends AppCompatActivity{
     @Override
         protected void onResume() {
         super.onResume();
-
-        if (accelerometer != null)
-            sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-        if(gyroscope != null)
-            sensorManager.registerListener(listener, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
-
-        if(proximity != null)
-            sensorManager.registerListener(listener, proximity, SensorManager.SENSOR_DELAY_NORMAL);
 
     }
 
